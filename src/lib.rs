@@ -682,6 +682,9 @@ impl<'a, 'p> Iterator for MatchIterator<'a, 'p> {
     #[inline]
     fn next(&mut self) -> Option<Match<'a>> {
         unsafe {
+            if self.subject.len() < self.offset as usize {
+                return None;
+            }
             let rc = detail::pcre_exec(self.code,
                                        self.extra,
                                        self.subject.as_ptr() as *const c_char,
@@ -691,8 +694,8 @@ impl<'a, 'p> Iterator for MatchIterator<'a, 'p> {
                                        self.ovector.as_mut_ptr(),
                                        self.ovector.len() as c_int);
             if rc >= 0 {
-                // Update the iterator state.
-                self.offset = self.ovector[1];
+                // Update the iterator state (make sure to always advance).
+                self.offset = std::cmp::max(self.offset + 1, self.ovector[1]);
 
                 Some(Match {
                     subject: self.subject,

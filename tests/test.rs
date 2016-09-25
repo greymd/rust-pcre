@@ -134,7 +134,7 @@ fn test_extra_mark() {
     // Double check to make sure the study worked
     assert!(study);
 
-    // Now after studying, we still should not be able to get the mark (since we still need 
+    // Now after studying, we still should not be able to get the mark (since we still need
     // to set the option in the extra AND execute it)
     assert_eq!(re.mark(), None);
 
@@ -150,7 +150,7 @@ fn test_extra_mark() {
     let opt_m1 = re.exec(subject1);
     assert!(opt_m1.is_some());
 
-    // It should match XY 
+    // It should match XY
     let m1 = opt_m1.unwrap();
     assert_eq!(m1.group(0), "XY");
 
@@ -180,4 +180,48 @@ fn test_optional_capture() {
     // That might come out as a surprise.
     assert_eq!(m1.group_start(1), usize::max_value());  // c_int -1
     assert_eq!(m1.group_end(1), usize::max_value());  // c_int -1
+}
+
+#[test]
+fn test_matches_zero_width() {
+    let subject = "12";
+    let mut re = Pcre::compile("").unwrap();
+    let mut it = re.matches(subject);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_some());
+    let mut m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 0);
+    assert_eq!(m.group_end(0), 0);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_some());
+    let mut m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 1);
+    assert_eq!(m.group_end(0), 1);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_some());
+    let mut m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 2);
+    assert_eq!(m.group_end(0), 2);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_none());
+}
+
+#[test]
+fn test_matches_zero_width_empty_target() {
+    let subject = "";
+    let mut re = Pcre::compile("").unwrap();
+    let mut it = re.matches(subject);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_some());
+    let mut m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 0);
+    assert_eq!(m.group_end(0), 0);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_none());
 }
