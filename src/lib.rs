@@ -694,7 +694,7 @@ impl<'a, 'p> Iterator for MatchIterator<'a, 'p> {
                                        self.ovector.as_mut_ptr(),
                                        self.ovector.len() as c_int);
             if rc >= 0 {
-                // Update the iterator state (make sure always advance).
+                // Update the iterator state (make sure to always advance).
                 self.offset = std::cmp::max(self.offset + 1, self.ovector[1]);
 
                 Some(Match {

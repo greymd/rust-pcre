@@ -114,6 +114,50 @@ fn test_matches_basic() {
 }
 
 #[test]
+fn test_matches_zero_width() {
+    let subject = "12";
+    let mut re = Pcre::compile("").unwrap();
+    let mut it = re.matches(subject);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_some());
+    let mut m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 0);
+    assert_eq!(m.group_end(0), 0);
+
+    opt_m = it.next();
+    assert!(opt_m.is_some());
+    m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 1);
+    assert_eq!(m.group_end(0), 1);
+
+    opt_m = it.next();
+    assert!(opt_m.is_some());
+    m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 2);
+    assert_eq!(m.group_end(0), 2);
+
+    opt_m = it.next();
+    assert!(opt_m.is_none());
+}
+
+#[test]
+fn test_matches_zero_width_empty_target() {
+    let subject = "";
+    let mut re = Pcre::compile("").unwrap();
+    let mut it = re.matches(subject);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_some());
+    let mut m = opt_m.unwrap();
+    assert_eq!(m.group_start(0), 0);
+    assert_eq!(m.group_end(0), 0);
+
+    let mut opt_m = it.next();
+    assert!(opt_m.is_none());
+}
+
+#[test]
 fn test_extra_mark() {
     let pattern = "X(*MARK:A)Y|X(*MARK:B)Z";
     let subject1 = "XY";
