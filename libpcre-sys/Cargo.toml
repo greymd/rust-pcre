@@ -16,6 +16,5 @@ name = "libpcre_sys"
 libc = "0.2"
 
 [build-dependencies]
-bzip2 = "0.3"
 pkg-config = "0.3"
 tar = "0.4"
